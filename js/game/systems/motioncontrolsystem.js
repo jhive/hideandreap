@@ -27,16 +27,19 @@ define(['ash', 'nodes/motioncontrolnode'], function(Ash, MotionControlNode){
 
 				if(this.keyPoll.isDown(control.left)){					
 					motion.velocityX = -control.speed;					
+					position.rotation = -90;
 				}
 				else if(this.keyPoll.isDown(control.right)){
 					motion.velocityX = control.speed;					
-				}
-				
-				if(this.keyPoll.isDown(control.down)){
+					position.rotation = 90;
+				}				
+				else if(this.keyPoll.isDown(control.down)){
 					motion.velocityY = control.speed;
+					position.rotation = 180;
 				}
 				else if(this.keyPoll.isDown(control.up)){
 					motion.velocityY = -control.speed;
+					position.rotation = 0;
 				}
 
 			}

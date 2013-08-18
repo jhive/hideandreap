@@ -47,8 +47,16 @@ function(
 		this.createReaper = function(){			
 			var entity = new Ash.Entity()
 				.add( new Display(
-					new SpriteView(this.spriteImage, {x:267, y:348, width:23, height:31}, {regX: 12, regY:15})
+					new SpriteView(assets.getImage('assets/player.png'), {x:0, y:0, width:64, height:64}, {regX: 12, regY:12})
 				))
+				.add( new AnimationFrames([ {x:0, y: 0, width:24, height:24},
+											{x:24, y: 0, width:24, height:24},
+											{x:48, y: 0, width:24, height:24},
+											{x:72, y: 0, width:24, height:24},
+											{x:96, y: 0, width:24, height:24},
+											{x:120, y: 0, width:24, height:24},
+											{x:144, y: 0, width:24, height:24},											
+											{x:168, y: 0, width:24, height:24}], 24, -1))
 				.add( new Position(40, 40, 0, 0))
 				.add( new Motion(0, 0, 0))
 				.add( new MotionControl(Keyboard.LEFT, Keyboard.RIGHT, Keyboard.UP, Keyboard.DOWN, 300))

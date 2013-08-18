@@ -37,7 +37,7 @@ function(Ash, RenderNode)
 				node.display.graphic.rotation = node.position.rotation;
 				node.display.graphic.alpha = node.position.alpha;
 			}
-			this.stage.update();
+			this.stage.update();		
 		},
 
 		removeFromDisplay: function(node){

@@ -21,7 +21,8 @@ require.config({
         //Modules
         ash: 'lib/ash/ash',
         jquery: 'lib/vendor/jquery-1.9.1',        
-    }
+    },
 
+    tilesize: { width:32, height:32 }
 
 });

@@ -2,6 +2,8 @@ define([
 	'ash', 	
 	'components/display', 
 	'components/position',	
+	'components/gridposition',
+	'components/collision',
 	'components/animationframes',	
 	'components/motion',
 	'components/motioncontrol',
@@ -12,6 +14,8 @@ function(
 	Ash,	
 	Display,
 	Position,	
+	GridPosition,
+	Collision,
 	AnimationFrames,
 	Motion,
 	MotionControl,
@@ -47,17 +51,19 @@ function(
 		this.createReaper = function(){			
 			var entity = new Ash.Entity()
 				.add( new Display(
-					new SpriteView(assets.getImage('assets/player.png'), {x:0, y:0, width:64, height:64}, {regX: 12, regY:12})
+					new SpriteView(assets.getImage('assets/player.png'), {x:0, y:0, width:64, height:64}, {regX: 20, regY:20})
 				))
-				.add( new AnimationFrames([ {x:0, y: 0, width:24, height:24},
-											{x:24, y: 0, width:24, height:24},
-											{x:48, y: 0, width:24, height:24},
-											{x:72, y: 0, width:24, height:24},
-											{x:96, y: 0, width:24, height:24},
-											{x:120, y: 0, width:24, height:24},
-											{x:144, y: 0, width:24, height:24},											
-											{x:168, y: 0, width:24, height:24}], 24, -1))
-				.add( new Position(40, 40, 0, 0))
+				.add( new AnimationFrames([ {x:0, y: 0, width:40, height:40},
+											{x:40, y: 0, width:40, height:40},
+											{x:80, y: 0, width:40, height:40},
+											{x:120, y: 0, width:40, height:40},
+											{x:160, y: 0, width:40, height:40},
+											{x:200, y: 0, width:40, height:40},
+											{x:240, y: 0, width:40, height:40},											
+											{x:280, y: 0, width:40, height:40}], 24, -1))
+				.add( new Position(0, 0, 0, 12))
+				.add( new GridPosition(1, 1))
+				.add( new Collision('reaper', ['tile']))
 				.add( new Motion(0, 0, 0))
 				.add( new MotionControl(Keyboard.LEFT, Keyboard.RIGHT, Keyboard.UP, Keyboard.DOWN, 300))
 
@@ -65,13 +71,15 @@ function(
 			return entity;
 		}
 
-		this.createWallTile = function(x, y){
-			
+		this.createTile = function(file, frame, x, y){				
+			var sprites = this.assets.getImage("assets/" + file);			
 			var entity = new Ash.Entity()
 				.add( new Display(
-					new SpriteView( this.spriteImage, { x:384, y: 104, width: 16, height: 24 })
+					new SpriteView( sprites, frame, {regX:frame.width/2, regY:frame.height/2} )
 				))
-				.add( new Position(x, y));
+				.add( new Position(16 + x * 32, 16 + y * 32, 0, 0))	
+				.add( new GridPosition(x, y))		
+				.add( new Collision('tile', []) );
 
 			this.engine.addEntity(entity);
 			return entity;			
@@ -81,7 +89,7 @@ function(
 			var entity = new Ash.Entity()
 				.add( new Display(
 						new SpriteView(
-							this.spriteImage, { x: 480, y: Math.floor(Math.random(3)) * 32, width: 32, height: 32 }
+							this.spriteImage, { x: 480, y: Math.floor(Math.random(3)) * 32, width: 32, height: 32 }, {regX:16, regY:16}
 						)
 					))
 				.add( new Position(x, y));

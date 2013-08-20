@@ -7,6 +7,8 @@ define([
 	'systems/spriteanimationsystem',	
 	'systems/movementsystem',
 	'systems/motioncontrolsystem',
+	'systems/gridseeksystem',
+	'systems/collisionsystem',
 	'brejep/keypoll'
 	], 
 function
@@ -19,6 +21,8 @@ function
 	SpriteAnimationSystem,		
 	MovementSystem,
 	MotionControlSystem,
+	GridSeekSystem,
+	CollisionSystem,
 	KeyPoll
 ){	
 	
@@ -29,6 +33,7 @@ function
 		creator:null,		
 		keyPoll:null,
 		mapParser:null,
+		tiles:null,
 
 		constructor: function(assetLoader, mapData){			
 			stage = new createjs.Stage("demoCanvas");			
@@ -40,9 +45,12 @@ function
 			this.creator = new EntityCreator( this.engine, assetLoader );	
 			this.keyPoll = new KeyPoll();		
 			this.mapParser = new MapParser(this.creator, mapData);
+			tiles = this.mapParser.parse();
 
-			this.engine.addSystem( new MotionControlSystem( this.keyPoll ), 0)
-			this.engine.addSystem( new MovementSystem(1))
+			this.engine.addSystem( new MotionControlSystem( this.keyPoll, tiles ), 0);
+			this.engine.addSystem( new GridSeekSystem(), 0);
+			this.engine.addSystem( new MovementSystem(), 1);
+			this.engine.addSystem( new CollisionSystem(), 1 );
 			this.engine.addSystem( new SpriteAnimationSystem(this.creator), 3 );
 			this.engine.addSystem( new RenderSystem(stage), 3 );
 		},
@@ -51,7 +59,7 @@ function
 		{									
 			/** Setup your game here **/
 			
-			this.mapParser.parse();
+			
 			this.creator.createReaper();
 
 			/** End game setup       **/

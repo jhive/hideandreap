@@ -1,70 +1,65 @@
 define([
-	'ash', 
-	'nodes/gamenode',
-	'nodes/playercollisionnode', 
-	'nodes/enemycollisionnode', 
-	'nodes/bulletcollisionnode'], 
+	'ash',
+	'nodes/collisionnode'
+	], 
 function( 
-	Ash, 
-	GameNode,
-	PlayerCollisionNode, 
-	EnemyCollisionNode, 
-	BulletCollisionNode ){
+	Ash,
+	CollisionNode
+	){
 
 	var CollisionSystem = Ash.System.extend({
 
-		creator:null,
-		games:null,
-		players:null,
-		enemies:null,
-		bullets:null,		
+		nodes:null,
+		collidables:null,	
 
-		constructor: function(creator){
-			this.creator = creator;
+		constructor: function(){			
+			this.collidables = {};
 		},
 
 		addToEngine: function(engine){
-			this.games = engine.getNodeList(GameNode);
-			this.enemies = engine.getNodeList(EnemyCollisionNode);
-			this.bullets = engine.getNodeList(BulletCollisionNode);
-			this.players = engine.getNodeList(PlayerCollisionNode);
+			this.nodes = engine.getNodeList(CollisionNode);
+
+			for(var node = this.nodes.head; node; node = node.next){
+				this.sortNodeIntoCollidablesDictionary(node);
+			}
+
+			this.nodes.nodeAdded.add(this.sortNodeIntoCollidablesDictionary, this);
+			this.nodes.nodeRemoved.add(this.removeNodeFromCollidablesDictionary, this);
+		},
+
+		sortNodeIntoCollidablesDictionary: function(node){
+
+			var array = this.collidables[node.collision.type] || [];			
+			if(array.length == 0) this.collidables[node.collision.type] = array;
+			array.push(node);
+		},
+
+		removeNodeFromCollidablesDictionary: function(node){
+
 		},
 
 		update: function(time){
-			for( var bullet = this.bullets.head; bullet; bullet = bullet.next){
-				for(var enemy = this.enemies.head; enemy; enemy = enemy.next){
-					var radius = bullet.position.collisionRadius + enemy.position.collisionRadius;										
-					if(bullet.position.position.distanceTo(enemy.position.position) < radius){
-						enemy.enemy.health--;
-						this.creator.killEntity(bullet.entity);
-						enemy.position.alpha = 0;
-						if(enemy.enemy.health <= 0){					
-							this.creator.killEntity(enemy.entity);
-							this.creator.createExplosion( enemy.position );							
-							this.games.head.game.score += 50;							
-						}
-					}	
-				}
-			}
+			var reapers = this.collidables['reaper'];
+			var tiles = this.collidables['tile'];
 
-			for( var player = this.players.head; player; player = player.next){
-				for(var enemy = this.enemies.head; enemy; enemy = enemy.next){
-					var radius = player.position.collisionRadius + enemy.position.collisionRadius;
-					if(player.position.position.distanceTo(enemy.position.position) < radius){
-						this.creator.killEntity(player.entity);
-						this.creator.killEntity(enemy.entity);
-
-						this.creator.createExplosion(enemy.position);
-						this.creator.createPlayerExplosion(player.position);
+			for(var i = 0; i < reapers.length; i++){
+				var reaper = reapers[i];
+				for(var j = 0; j < tiles.length; j++){
+					var tile = tiles[j];
+					var radius = reaper.position.collisionRadius + tile.position.collisionRadius;
+					if(reaper.position.position.distanceTo(tile.position.position) < radius){
+						
 					}
 				}
-			}
-
+			}			
 		},		
 
+		getCollisionID: function(nodeA, nodeB){
+			
+		},
+
 		removeFromEngine: function(engine){
-			enemies = null;
-			bullets = null;
+			
 		}
 
 	});

@@ -2,6 +2,7 @@ define([
 	'ash',
 	'easeljs', 
 	'game/entitycreator', 	
+	'game/mapparser',
 	'systems/rendersystem',		
 	'systems/spriteanimationsystem',	
 	'systems/movementsystem',
@@ -13,6 +14,7 @@ function
 	Ash, 
 	EaselJS, 
 	EntityCreator,	
+	MapParser,	
 	RenderSystem,		
 	SpriteAnimationSystem,		
 	MovementSystem,
@@ -26,8 +28,9 @@ function
 		engine:null,
 		creator:null,		
 		keyPoll:null,
+		mapParser:null,
 
-		constructor: function(assetLoader){			
+		constructor: function(assetLoader, mapData){			
 			stage = new createjs.Stage("demoCanvas");			
 
 			this.width = stage.width;
@@ -36,6 +39,7 @@ function
 			this.engine = new Ash.Engine();			
 			this.creator = new EntityCreator( this.engine, assetLoader );	
 			this.keyPoll = new KeyPoll();		
+			this.mapParser = new MapParser(this.creator, mapData);
 
 			this.engine.addSystem( new MotionControlSystem( this.keyPoll ), 0)
 			this.engine.addSystem( new MovementSystem(1))
@@ -46,14 +50,8 @@ function
 		start: function()
 		{									
 			/** Setup your game here **/
-			for(var i = 0; i < 20; i++ ){
-				for(var j = 0 ; j < 20; j++){
-					if(i == 5 && j > 10){
-						this.creator.createWallTile(i * 16, j * 24);
-					}										
-				}
-			}
-
+			
+			this.mapParser.parse();
 			this.creator.createReaper();
 
 			/** End game setup       **/

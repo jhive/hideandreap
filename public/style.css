@@ -1,0 +1,7 @@
+
+#demoCanvas{
+	position: absolute;	
+	width: 640;
+	height: 640;
+	background-image:url('assets/background.png');
+}

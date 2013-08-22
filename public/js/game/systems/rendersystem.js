@@ -1,16 +1,24 @@
 define(
 	['ash',
+	 'easeljs',
 	 'nodes/rendernode'
 	],
-function(Ash, RenderNode)
+function(Ash, EaselJS, RenderNode)
 {
 	var RenderSystem = Ash.System.extend({
 
 		stage: null,
+		layers: null,
 		nodes: null,
 
 		constructor: function(stage){			
 			this.stage = stage;			
+			this.layers = [new createjs.Container(), new createjs.Container()];
+			
+			for( var i = 0; i < this.layers.length; i++){
+				this.stage.addChild(this.layers[i]);
+			}
+
 			return this;
 		},
 
@@ -27,7 +35,7 @@ function(Ash, RenderNode)
 
 		addToDisplay: function(node)
 		{						
-			this.stage.addChild(node.display.graphic);			
+			this.layers[node.position.layer].addChild(node.display.graphic);			
 		},
 
 		update: function(time){
@@ -41,7 +49,7 @@ function(Ash, RenderNode)
 		},
 
 		removeFromDisplay: function(node){
-			this.stage.removeChild(node.display.graphic);
+			this.layers[node.position.layer].removeChild(node.display.graphic);
 		},
 
 		removeFromEngine: function(engine)

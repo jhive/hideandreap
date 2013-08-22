@@ -1,28 +1,32 @@
 define([
 	'ash',
 	'easeljs', 
+	'settings',
 	'game/entitycreator', 	
 	'game/mapparser',
 	'systems/rendersystem',		
 	'systems/spriteanimationsystem',	
 	'systems/movementsystem',
 	'systems/motioncontrolsystem',
-	'systems/gridseeksystem',
-	'systems/collisionsystem',
+	'systems/gridseeksystem',	
+	'systems/lightingsystem',
+	'components/position',
 	'brejep/keypoll'
 	], 
 function
 (
 	Ash, 
 	EaselJS, 
+	Settings,
 	EntityCreator,	
 	MapParser,	
 	RenderSystem,		
 	SpriteAnimationSystem,		
 	MovementSystem,
 	MotionControlSystem,
-	GridSeekSystem,
-	CollisionSystem,
+	GridSeekSystem,	
+	LightingSystem,
+	Position,
 	KeyPoll
 ){	
 	
@@ -36,10 +40,10 @@ function
 		tiles:null,
 
 		constructor: function(assetLoader, mapData){			
-			stage = new createjs.Stage("demoCanvas");			
+			this.stage = new createjs.Stage("demoCanvas");			
 
-			this.width = stage.width;
-			this.height =  stage.height;
+			this.width = this.stage.width;
+			this.height =  this.stage.height;
 
 			this.engine = new Ash.Engine();			
 			this.creator = new EntityCreator( this.engine, assetLoader );	
@@ -49,10 +53,10 @@ function
 
 			this.engine.addSystem( new MotionControlSystem( this.keyPoll, tiles ), 0);
 			this.engine.addSystem( new GridSeekSystem(), 0);
-			this.engine.addSystem( new MovementSystem(), 1);
-			this.engine.addSystem( new CollisionSystem(), 1 );
-			this.engine.addSystem( new SpriteAnimationSystem(this.creator), 3 );
-			this.engine.addSystem( new RenderSystem(stage), 3 );
+			this.engine.addSystem( new MovementSystem(), 1);			
+			this.engine.addSystem( new SpriteAnimationSystem(this.creator), 3 );			
+			this.engine.addSystem( new RenderSystem(this.stage), 3 );
+			//this.engine.addSystem( new LightingSystem(this.creator, this.stage), 3);
 		},
 
 		start: function()
@@ -60,8 +64,9 @@ function
 			/** Setup your game here **/
 			
 			
-			this.creator.createReaper();
-
+			var reaper = this.creator.createReaper();
+			this.creator.createVisionField(reaper.get(Position), Settings.reaperVisionRadius)
+			this.creator.createVisionField(new Position(300, 300), 50);
 			/** End game setup       **/
 
             createjs.Ticker.addEventListener("tick", this.handleTick.bind(this));

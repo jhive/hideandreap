@@ -1,5 +1,7 @@
 define([
 	'ash', 	
+	'easeljs',
+	'settings',
 	'components/display', 
 	'components/position',	
 	'components/gridposition',
@@ -7,11 +9,16 @@ define([
 	'components/animationframes',	
 	'components/motion',
 	'components/motioncontrol',
+	'components/light',
 
 	'graphics/spriteview',
+	'graphics/shapeview'
 ], 
 function(
-	Ash,	
+	Ash,		
+	EaselJS,
+	Settings,
+
 	Display,
 	Position,	
 	GridPosition,
@@ -19,12 +26,14 @@ function(
 	AnimationFrames,
 	Motion,
 	MotionControl,
+	Light,
 
-	SpriteView
+	SpriteView,
+	ShapeView
 	)
 {
 	var EntityCreator = function(engine, assets)
-	{
+	{		
 		this.engine = engine;
 		this.assets = assets;		
 
@@ -71,6 +80,15 @@ function(
 			return entity;
 		}
 
+		this.createVisionField = function(position, radius){			
+			var entity = new Ash.Entity()				
+				.add( new Light(radius) )
+				.add( position );
+
+			this.engine.addEntity(entity);
+			return entity;
+		}
+
 		this.createTile = function(file, frame, x, y){				
 			var sprites = this.assets.getImage("assets/" + file);			
 			var entity = new Ash.Entity()
@@ -83,6 +101,22 @@ function(
 
 			this.engine.addEntity(entity);
 			return entity;			
+		}		
+
+		this.createDarkness = function(){
+
+			var darkness = new ShapeView();			
+ 			darkness.graphics.beginFill("rgba(0,0,0, 0.6)").drawRect(0, 0, Settings.stage.width, Settings.stage.height); 			
+
+ 			var position = new Position(0,0);
+ 			position.layer = 1;
+
+			var entity = new Ash.Entity()
+				.add( new Display( darkness ))
+				.add( position );
+
+			this.engine.addEntity(entity);
+			return entity;
 		}
 
 		this.createFloorTile = function(x, y){

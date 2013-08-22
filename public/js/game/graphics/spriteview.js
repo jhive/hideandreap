@@ -10,14 +10,21 @@ define(['ash', 'easeljs', 'jquery'], function(Ash, EaselJS, $)
 			regPoint: the registration point used for rotation and scaling
 		**/
 		constructor: function(texture, sourceRect, regPoint){			
-
+			
 			self = this;
 			this.texture = texture;						
 
 			self.image = texture;							
-			self.sourceRect = sourceRect ? sourceRect : {x:0, y:0, width:0, height:0};
-			self.regX = regPoint ? regPoint.regX : 0;
-			self.regY = regPoint ? regPoint.regY : 0;
+			self.sourceRect = sourceRect ? sourceRect : { x:0, y:0, width:texture.width, height:texture.height };
+			
+			if(regPoint === "center"){				
+				self.regX = texture.width / 2;
+				self.regY = texture.height / 2;
+			}
+			else{
+				self.regX = regPoint ? regPoint.regX : 0;
+				self.regY = regPoint ? regPoint.regY : 0;	
+			}
 		}
 
 	});

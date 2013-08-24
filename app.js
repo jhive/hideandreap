@@ -30,6 +30,22 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+var server = http.createServer(app)
+	io = require('socket.io').listen(server);
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log(data)
+  });
+
+  socket.on('updatePosition', function(data){
+  	console.log(data);  	
+  	socket.emit('enemyPosition', {position:{x:24-data.x, y:18-data.y, rotation:data.rotation - 180}})
+  })
+});
+
+
+server.listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));  
 });

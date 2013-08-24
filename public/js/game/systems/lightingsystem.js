@@ -9,13 +9,17 @@ function(Ash, EaselJS, LightingNode, Display, Settings)
 {
 	var LightingSystem = Ash.System.extend({
 
+		stage:null,
 		darkness:null, 
 		mask: null,		
 		nodes: null,
 
 		constructor: function(creator, stage){						
-			this.mask = new createjs.Shape();			
-			stage.addChild(this.mask);			
+			this.mask = new createjs.Shape();						
+			this.stage = stage;
+
+			this.stage.addChild(this.mask);			
+
 			return this;			
 		},
 
@@ -29,20 +33,30 @@ function(Ash, EaselJS, LightingNode, Display, Settings)
 		
 		update: function(time){
 			this.mask.graphics.clear();
-			this.mask.graphics.beginFill("rgba(0,0,0, 0.99)");
+			this.mask.graphics.beginFill("rgba(0,0,0, 1)");
 			this.mask.graphics.rect(0, 0, Settings.stage.width, Settings.stage.height); 			
-
-
-			for( var node = this.nodes.head; node; node = node.next ){												
-				this.mask.graphics.arc(node.position.position.x, node.position.position.y,node.light.radius,Math.PI*2,0,true);
-			}
+			this.mask.cache(0, 0, Settings.stage.width, Settings.stage.height);
 
 			for( var node = this.nodes.head; node; node = node.next ){												
 				var position = node.position.position;
-				this.mask.graphics.
-				beginRadialGradientFill(["rgba(0,0,0, 0)","rgba(0,0,0, 1)"], [0, 1], position.x, position.y, 0, position.x, position.y, node.light.radius + 2)
-				.drawCircle(position.x, position.y, node.light.radius + 2);
-			}
+				var radius = node.light.radius;
+				var diameter = (node.light.radius) * 2;
+				
+				var destX = Math.floor(position.x - radius);
+				var destY = Math.floor(position.y - radius);
+				
+				var lightImageData = node.light.imageData;											
+				var source = lightImageData.getContext("2d").getImageData(0, 0, diameter, diameter).data;				
+				var destinationImageData = this.mask.cacheCanvas.getContext("2d").getImageData(destX, destY, diameter, diameter);
+				var destination = destinationImageData.data;
+				
+				for(var i = 0; i < destination.length; i += 4){														
+					destination[i + 3] = destination[i+3] - ((source[i] + source[i+1] + source[i+2]) / 3);					
+				}
+
+				this.mask.cacheCanvas.getContext("2d").putImageData(destinationImageData, position.x - radius, position.y - radius);				
+
+			}				
 		},
 
 		removeFromMask: function(node){

@@ -11,7 +11,7 @@ require.config({
     //the paths config could be for a directory.
     paths: {
         //Library folders
-        easeljs: 'lib/easeljs/easeljs-NEXT.min',        
+        easeljs: 'lib/easeljs/easeljs-0.6.1.min',        
         components: 'game/components',
         nodes: 'game/nodes',
         systems: 'game/systems',
@@ -21,6 +21,7 @@ require.config({
         //Modules
         ash: 'lib/ash/ash',
         jquery: 'lib/vendor/jquery-1.9.1',        
+        bitmapcreator: 'game/bitmapcreator'
     },
 
     tilesize: { width:32, height:32 }

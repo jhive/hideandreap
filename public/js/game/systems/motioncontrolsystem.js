@@ -5,10 +5,12 @@ define(['ash', 'nodes/motioncontrolnode','brejep/point'], function(Ash, MotionCo
 		keyPoll: null,
 		tiles:null,
 		nodes: null,
+		socket: null,
 
-		constructor: function( keyPoll, tiles ){
+		constructor: function( keyPoll, tiles, socket ){
 			this.keyPoll = keyPoll;
 			this.tiles = tiles;
+			this.socket = socket;
 		},
 
 		addToEngine: function(engine){			
@@ -46,10 +48,17 @@ define(['ash', 'nodes/motioncontrolnode','brejep/point'], function(Ash, MotionCo
 					position.rotation = 0;
 				}				
 
-				if(this.isValidPosition(targetposition)){
+				if(this.isValidPosition(targetposition)){										
+					if(gridposition.position.x != targetposition.x
+						|| gridposition.position.y != targetposition.y){
+						this.socket.setPosition(targetposition.x, targetposition.y, position.rotation);	
+					}
+
 					gridposition.position.x = targetposition.x;
-					gridposition.position.y = targetposition.y;
+					gridposition.position.y = targetposition.y;				
 				}
+
+
 			}
 		},
 

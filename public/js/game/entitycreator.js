@@ -1,7 +1,9 @@
 define([
 	'ash', 	
 	'easeljs',
+	'bitmapcreator',
 	'settings',
+
 	'components/display', 
 	'components/position',	
 	'components/gridposition',
@@ -9,6 +11,7 @@ define([
 	'components/animationframes',	
 	'components/motion',
 	'components/motioncontrol',
+	'components/servercontrol',
 	'components/light',
 
 	'graphics/spriteview',
@@ -17,6 +20,7 @@ define([
 function(
 	Ash,		
 	EaselJS,
+	BitmapCreator,
 	Settings,
 
 	Display,
@@ -26,6 +30,7 @@ function(
 	AnimationFrames,
 	Motion,
 	MotionControl,
+	ServerControl,
 	Light,
 
 	SpriteView,
@@ -71,8 +76,7 @@ function(
 											{x:240, y: 0, width:40, height:40},											
 											{x:280, y: 0, width:40, height:40}], 24, -1))
 				.add( new Position(0, 0, 0, 12))
-				.add( new GridPosition(1, 1))
-				.add( new Collision('reaper', ['tile']))
+				.add( new GridPosition(1, 1))				
 				.add( new Motion(0, 0, 0))
 				.add( new MotionControl(Keyboard.LEFT, Keyboard.RIGHT, Keyboard.UP, Keyboard.DOWN, 300))
 
@@ -80,9 +84,37 @@ function(
 			return entity;
 		}
 
+		this.createWizard = function(socket){			
+			var entity = new Ash.Entity()
+				.add( new Display(
+					new SpriteView(assets.getImage('assets/player.png'), {x:0, y:0, width:64, height:64}, {regX: 20, regY:20})
+				))
+				.add( new AnimationFrames([ {x:0, y: 0, width:40, height:40},
+											{x:40, y: 0, width:40, height:40},
+											{x:80, y: 0, width:40, height:40},
+											{x:120, y: 0, width:40, height:40},
+											{x:160, y: 0, width:40, height:40},
+											{x:200, y: 0, width:40, height:40},
+											{x:240, y: 0, width:40, height:40},											
+											{x:280, y: 0, width:40, height:40}], 24, -1))
+				.add( new Position(0, 0, 0, 12))
+				.add( new GridPosition(0, 0))				
+				.add( new Motion(0, 0, 0))
+				.add( new ServerControl(socket.enemyState));
+
+			socket.enemyState.position.x = 23;
+			socket.enemyState.position.y = 17;				
+
+			this.engine.addEntity(entity);
+			return entity;
+		}
+
 		this.createVisionField = function(position, radius){			
+
+			var imageData = BitmapCreator.createLightImageData(radius);
+
 			var entity = new Ash.Entity()				
-				.add( new Light(radius) )
+				.add( new Light(radius, imageData) )
 				.add( position );
 
 			this.engine.addEntity(entity);

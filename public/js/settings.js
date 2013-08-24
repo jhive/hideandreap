@@ -9,7 +9,7 @@ function($){
 
 		wizardSpeed: 10,
 		reaperSpeed: 10,
-		reaperVisionRadius: 85
+		reaperVisionRadius: 100
 
 	};
 

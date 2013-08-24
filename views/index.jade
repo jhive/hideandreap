@@ -1,5 +1,9 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	div#info
+	canvas#demoCanvas(width="800" height="608") alternate content
+		
+	script(src="/socket.io/socket.io.js")	
+	script(src="js/keyboard.js")
+	script(data-main="js/config.js" src="js/require.js") 

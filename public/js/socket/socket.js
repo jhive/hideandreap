@@ -3,25 +3,40 @@ define(['ash', 'jquery'], function(Ash,  $){
 	var Socket = Ash.Class.extend({
 		self:null,
 		socket:null,		
-		enemyState: null,
-		constructor:function(){
+		uuid:null,
+		state: {},
+		settings: null,		
+
+		constructor:function(game){
+			
+			this.game = game;
+
 			var self = this;
 			
 			this.socket = io.connect('http://localhost');
-			this.socket.on('news', this.handleNews);
-			
-			this.socket.on('enemyPosition', function(data){
-				console.log(self.enemyState);
-				$("#info").html("Information: " + data.position.x + ":" + data.position.y);
-				console.log(self.enemyState);
-				self.enemyState.position.x = data.position.x;
-				self.enemyState.position.y = data.position.y;
-				self.enemyState.position.rotation = data.position.rotation;
+			this.socket.on('onconnect', function(data){				
+				self.uuid = data.id;							
+				self.settings = self.socket.gamesettings;
 			});
 
-			this.enemyState = {
-				position: {x:0, y:0, rotation:0}
-			}			
+			this.socket.on('message', function(message){
+				console.log(message);
+			})
+
+			this.socket.on('startGame', function(data){								
+				self.state = data.state;
+				self.game.start(data.state);				
+			});
+
+			this.socket.on('update', function(state){					
+				self.state.players.me.position.x = state.players.me.position.x;
+				self.state.players.me.position.y = state.players.me.position.y;
+				self.state.players.me.position.rotation = state.players.me.position.rotation;				
+
+				self.state.players.enemy.position.x = state.players.enemy.position.x;
+				self.state.players.enemy.position.y = state.players.enemy.position.y;
+				self.state.players.enemy.position.rotation = state.players.enemy.position.rotation;														
+			});		
 		},
 
 		handleNews:function(data){
@@ -33,8 +48,8 @@ define(['ash', 'jquery'], function(Ash,  $){
 		},
 
 		setPosition:function( x, y, rotation ){
-			this.socket.emit('updatePosition', {x:x, y:y, rotation:rotation});
-		}
+			this.socket.emit('updatePosition', {id: this.uuid, x:x, y:y, rotation:rotation});
+		},		
 
 	});
 

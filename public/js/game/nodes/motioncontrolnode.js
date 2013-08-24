@@ -1,5 +1,6 @@
 define([
 	'ash', 
+	'components/player',
 	'components/motioncontrol', 
 	'components/motion',
 	'components/position',
@@ -7,6 +8,7 @@ define([
 	], 
 function(
 	Ash,
+	Player,
 	MotionControl,
 	Motion,
 	Position,
@@ -14,19 +16,22 @@ function(
 
 	var MotionControlNode = Ash.Node.extend({
 				
+		player: null,
 		control: null,
 		motion: null,
 		position: null, 
 		gridposition: null,	
 
-		types: {			
+		types: {	
+			player: Player,		
 			control:MotionControl,			
 			motion:Motion,
 			position:Position,
 			gridposition:GridPosition
 		},
 
-		constructor: function( control, motion, position, gridposition ){			
+		constructor: function( player, control, motion, position, gridposition ){			
+			this.player = player;
 			this.motion = control;
 			this.motion = motion;
 			this.position = position;

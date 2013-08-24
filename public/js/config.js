@@ -11,7 +11,7 @@ require.config({
     //the paths config could be for a directory.
     paths: {
         //Library folders
-        easeljs: 'lib/easeljs/easeljs-0.6.1.min',        
+        easeljs: 'lib/easeljs/easeljs-NEXT.min',        
         components: 'game/components',
         nodes: 'game/nodes',
         systems: 'game/systems',

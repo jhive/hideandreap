@@ -1,6 +1,6 @@
 define(['ash', 'nodes/servercontrolnode','brejep/point'], function(Ash, ServerControlNode, Point){
 
-	var MotionControlSystem = Ash.System.extend({
+	var ServerControlSystem = Ash.System.extend({
 		
 		nodes: null,		
 
@@ -15,16 +15,19 @@ define(['ash', 'nodes/servercontrolnode','brejep/point'], function(Ash, ServerCo
 		update: function(time)
 		{			
 			for( var node = this.nodes.head; node; node = node.next)
-			{
-				var control = node.control,
+			{				
+				var player = node.player,
+					control = node.control,
 					position = node.position,
 					gridposition = node.gridposition,
 					motion = node.motion;					
 
-				if(control.enemyState.position){
-					position.rotation = control.enemyState.position.rotation;
-					gridposition.position.x = control.enemyState.position.x;
-					gridposition.position.y = control.enemyState.position.y;						
+				var data = control.socket.state.players.enemy;							
+								
+				if( data ){					
+					position.rotation = data.position.rotation;
+					gridposition.position.x = data.position.x;
+					gridposition.position.y = data.position.y;						
 				}
 			}
 		},
@@ -42,5 +45,5 @@ define(['ash', 'nodes/servercontrolnode','brejep/point'], function(Ash, ServerCo
 		}
 	});
 
-	return MotionControlSystem;
+	return ServerControlSystem;
 });

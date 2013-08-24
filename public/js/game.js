@@ -47,6 +47,7 @@ function
 		tiles:null,
 
 		constructor: function(assetLoader, mapData){			
+			console.log("Build");
 			this.stage = new createjs.Stage("demoCanvas");			
 
 			this.width = this.stage.width;
@@ -54,35 +55,49 @@ function
 
 			this.engine = new Ash.Engine();			
 			this.creator = new EntityCreator( this.engine, assetLoader );	
-			this.socket = new Socket();
+			this.socket = new Socket(this);			
 
 			this.keyPoll = new KeyPoll();		
 			this.mapParser = new MapParser(this.creator, mapData);
-			tiles = this.mapParser.parse();
-
-			this.engine.addSystem( new MotionControlSystem( this.keyPoll, tiles, this.socket ), 0);
-			//this.engine.addSystem( new ServerControlSystem(), 0);
-			this.engine.addSystem( new GridSeekSystem(), 1);
-			this.engine.addSystem( new MovementSystem(), 2);			
-			this.engine.addSystem( new SpriteAnimationSystem(this.creator), 3 );						
-			this.engine.addSystem( new RenderSystem(this.stage), 3 );
-			this.engine.addSystem( new LightingSystem(this.creator, this.stage), 3);
-			
+				
 		},
 
-		start: function()
-		{									
+
+		start: function(state)
+		{					
+		console.log("Start")				
 			/** Setup your game here **/
-			
-			
-			var reaper = this.creator.createReaper();
-			var wizard = this.creator.createWizard(this.socket);
-			this.creator.createVisionField(reaper.get(Position), Settings.reaperVisionRadius)
+			this.reset();
+			this.initEngines();
+						
+			var player = this.creator.createPlayer( state.players.me );
+			var enemy = this.creator.createPlayer( state.players.enemy, this.socket);
+						
+			this.creator.createVisionField(player.get(Position), state.players.me.visionRadius);
 			this.creator.createVisionField(new Position(300, 300), 80);
 			/** End game setup       **/
 
             createjs.Ticker.addEventListener("tick", this.handleTick.bind(this));
 			createjs.Ticker.setFPS(60);	
+		},
+
+		initEngines: function(){
+
+			tiles = this.mapParser.parse();
+			
+			this.engine.addSystem( new MotionControlSystem( this.keyPoll, tiles, this.socket ), 0);
+			this.engine.addSystem( new ServerControlSystem(), 0);
+			this.engine.addSystem( new GridSeekSystem(), 1);
+			this.engine.addSystem( new MovementSystem(), 2);			
+			this.engine.addSystem( new SpriteAnimationSystem(this.creator), 3 );						
+			this.engine.addSystem( new RenderSystem(this.stage), 3 );
+			//this.engine.addSystem( new LightingSystem(this.creator, this.stage), 3);
+
+		},
+
+		reset:function(){
+			this.engine.removeAllEntities();
+			this.engine.removeAllSystems();
 		},
 
 		handleTick: function(event)

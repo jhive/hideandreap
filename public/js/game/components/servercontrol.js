@@ -1,8 +1,8 @@
 define(['ash'], function(Ash){
 
 	var ServerControl = Ash.Class.extend({		
-		constructor: function(enemyState){
-			this.enemyState = enemyState;
+		constructor: function(socket){
+			this.socket = socket;
 		}
 	});
 

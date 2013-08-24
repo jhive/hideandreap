@@ -3,12 +3,10 @@ function(Ash){
 
 	var Player = Ash.Class.extend({
 		
-		id:null,
-		deathcooldown:null,
+		id:null,		
 
-		constructor:function(deathcooldown){
-			this.id = "Player";
-			this.deathcooldown = deathcooldown;
+		constructor:function(id){
+			this.id = id;			
 		}
 	});
 

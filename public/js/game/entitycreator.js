@@ -4,6 +4,7 @@ define([
 	'bitmapcreator',
 	'settings',
 
+	'components/player',
 	'components/display', 
 	'components/position',	
 	'components/gridposition',
@@ -23,6 +24,7 @@ function(
 	BitmapCreator,
 	Settings,
 
+	Player,
 	Display,
 	Position,	
 	GridPosition,
@@ -62,11 +64,12 @@ function(
 			return entity;
 		}
 
-		this.createReaper = function(){			
+		this.createPlayer = function(data, socket){						
 			var entity = new Ash.Entity()
 				.add( new Display(
 					new SpriteView(assets.getImage('assets/player.png'), {x:0, y:0, width:64, height:64}, {regX: 20, regY:20})
 				))
+				.add( new Player(data.id))
 				.add( new AnimationFrames([ {x:0, y: 0, width:40, height:40},
 											{x:40, y: 0, width:40, height:40},
 											{x:80, y: 0, width:40, height:40},
@@ -75,37 +78,23 @@ function(
 											{x:200, y: 0, width:40, height:40},
 											{x:240, y: 0, width:40, height:40},											
 											{x:280, y: 0, width:40, height:40}], 24, -1))
-				.add( new Position(0, 0, 0, 12))
-				.add( new GridPosition(1, 1))				
-				.add( new Motion(0, 0, 0))
-				.add( new MotionControl(Keyboard.LEFT, Keyboard.RIGHT, Keyboard.UP, Keyboard.DOWN, 300))
+				.add( new Position(0, 0, data.position.rotation, 12))
+				.add( new GridPosition( data.position.x, data.position.y ) )				
+				.add( new Motion(0, 0, 0));
+
+			if(!socket){
+				//Give the player control of this sprite
+				console.log("Create player");
+				entity.add( new MotionControl(Keyboard.LEFT, Keyboard.RIGHT, Keyboard.UP, Keyboard.DOWN, 300));
+			}	
+			else{
+				// Enemy character updated by server
+				console.log("Create enemy");
+				entity.add( new ServerControl(socket));
+			}
 
 			this.engine.addEntity(entity);
-			return entity;
-		}
 
-		this.createWizard = function(socket){			
-			var entity = new Ash.Entity()
-				.add( new Display(
-					new SpriteView(assets.getImage('assets/player.png'), {x:0, y:0, width:64, height:64}, {regX: 20, regY:20})
-				))
-				.add( new AnimationFrames([ {x:0, y: 0, width:40, height:40},
-											{x:40, y: 0, width:40, height:40},
-											{x:80, y: 0, width:40, height:40},
-											{x:120, y: 0, width:40, height:40},
-											{x:160, y: 0, width:40, height:40},
-											{x:200, y: 0, width:40, height:40},
-											{x:240, y: 0, width:40, height:40},											
-											{x:280, y: 0, width:40, height:40}], 24, -1))
-				.add( new Position(0, 0, 0, 12))
-				.add( new GridPosition(0, 0))				
-				.add( new Motion(0, 0, 0))
-				.add( new ServerControl(socket.enemyState));
-
-			socket.enemyState.position.x = 23;
-			socket.enemyState.position.y = 17;				
-
-			this.engine.addEntity(entity);
 			return entity;
 		}
 

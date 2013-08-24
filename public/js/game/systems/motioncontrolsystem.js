@@ -49,8 +49,8 @@ define(['ash', 'nodes/motioncontrolnode','brejep/point'], function(Ash, MotionCo
 				}				
 
 				if(this.isValidPosition(targetposition)){										
-					if(gridposition.position.x != targetposition.x
-						|| gridposition.position.y != targetposition.y){
+					if( gridposition.position.x != targetposition.x
+						|| gridposition.position.y != targetposition.y){						
 						this.socket.setPosition(targetposition.x, targetposition.y, position.rotation);	
 					}
 

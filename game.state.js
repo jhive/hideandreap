@@ -21,17 +21,20 @@ var Game = function(host){
 	this.id = UUID();
 	this.host = host;
 	this.client = null;
-	this.player_count = 1;
+	this.player_count = 0;
 	
 	var _state = new GameState(this.id);
 	
 	host.hosting = true;
 
-	this.addPlayer = function(player){			
+	this.addPlayer = function(player){					
 		var state = new PlayerState(player.uuid);		
-		_state.players[player.uuid] = state;
+		_state.players[player.uuid] = state;		
 		player.state = _state;
 		player.game = this;
+
+		this.player_count++;
+		player.send(this.player_count);		
 	}
 
 	this.addPlayer(host);

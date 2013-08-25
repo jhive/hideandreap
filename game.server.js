@@ -10,9 +10,7 @@ var Server = function(){
 
 
 	var _createGame = function(player){
-		var game = new Game(player);		
-		game.addPlayer(player);		
-
+		var game = new Game(player);					
 		_games[game.id] = game;
 		_game_count++;						
 	};
@@ -36,7 +34,7 @@ var Server = function(){
 				var game = _games[id];
 				if(game.player_count < 2){
 					
-					game.player_count++;
+					
 					game.client = player;
 					game.addPlayer(player)
 
@@ -67,6 +65,29 @@ var Server = function(){
 		_listen(game.client);
 	}
 
+	var _endGame = function(gameid, userid){
+
+		var game = _games[gameid];
+		if(game){
+
+			if(game.player_count > 1){
+				if(userid == game.host.uuid){
+					if(game.client){
+						game.client.send("Player has left");
+					}
+				}
+				else{
+					if(game.host){
+						game.host.send("Player has left");
+					}
+				}
+			}
+
+			delete _games[gameid];
+			_game_count--;
+		}
+	}
+
 	var _listen = function(socket){		
 		var game = socket.game;
 		socket.on('updatePosition', function(data){			
@@ -84,7 +105,8 @@ var Server = function(){
 	return {		
 		games: _games,
 		game_count: _game_count,
-		findGame: _findGame		
+		findGame: _findGame,
+		endGame: _endGame
 	}
 }
 

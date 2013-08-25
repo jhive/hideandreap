@@ -15,9 +15,11 @@ function(Ash, EaselJS, RenderNode)
 			this.stage = stage;			
 			this.layers = [new createjs.Container(), new createjs.Container()];
 			
-			for( var i = 0; i < this.layers.length; i++){
-				this.stage.addChild(this.layers[i]);
+			for(var i = 0; i < this.layers.length; i++){
+				this.stage.addChild(this.layers[i]);			
 			}
+			
+			
 
 			return this;
 		},
@@ -35,7 +37,7 @@ function(Ash, EaselJS, RenderNode)
 
 		addToDisplay: function(node)
 		{						
-			this.layers[node.position.layer].addChild(node.display.graphic);			
+			this.layers[node.position.layer].addChild(node.display.graphic);		
 		},
 
 		update: function(time){

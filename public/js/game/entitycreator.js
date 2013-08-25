@@ -1,5 +1,6 @@
 define([
 	'ash', 	
+	'jquery',
 	'easeljs',
 	'bitmapcreator',
 	'settings',
@@ -19,7 +20,8 @@ define([
 	'graphics/shapeview'
 ], 
 function(
-	Ash,		
+	Ash,	
+	$,	
 	EaselJS,
 	BitmapCreator,
 	Settings,

@@ -46,6 +46,11 @@ io.sockets.on('connection', function (socket) {
     console.log(data)
   });
 
+  socket.on('disconnect', function (){ 
+    if(socket.game && socket.game.id) {      
+      gameserver.endGame(socket.game.id, socket.userid);
+    }
+});
   
 });
 

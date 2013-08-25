@@ -13,7 +13,8 @@ define(['ash', 'jquery'], function(Ash,  $){
 
 			var self = this;
 			
-			this.socket = io.connect('http://localhost');
+			this.socket = io.connect(window.location.hostname);
+			//this.socket = io.connect('http://localhost');
 			this.socket.on('onconnect', function(data){				
 				self.uuid = data.id;							
 				self.settings = self.socket.gamesettings;

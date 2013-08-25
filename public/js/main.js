@@ -6,7 +6,7 @@ require(['jquery', 'game', 'game/assetloader'], function($, Game, AssetLoader){
 		this.init = function(assets)
 		{															
 			
-			$.getJSON("http://localhost:3000/assets/map.json",function(result){
+			$.getJSON("/assets/map.json",function(result){
 				var game = new Game(assets, result);
 				//game.start();			
 			});			        

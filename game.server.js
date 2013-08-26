@@ -19,8 +19,8 @@ var Server = function(){
 		player.send('Searching for room');
 		
 		if(_game_count == 0){
-			player.send("Creating new room");
-			_createGame(player);	
+			player.send("Waiting for a player");
+			_createGame(player);				
 		}
 		else{
 
@@ -54,12 +54,8 @@ var Server = function(){
 	var _startGame = function(game){
 		game.host.send("Connected!");
 		game.client.send("Connected!");			
-		
-		game.setPlayerPosition( {id: game.host.uuid, x: 1, y: 1, rotation: 0} );
-		game.setPlayerPosition({id: game.client.uuid, x: 23, y: 17, rotation: 180});
 
-		game.host.emit('startGame', { state: game.state(game.host)} );
-		game.client.emit('startGame', { state: game.state(game.client)} );	
+		game.startNewGame();			
 
 		_listen(game.host);
 		_listen(game.client);
@@ -91,13 +87,24 @@ var Server = function(){
 	var _listen = function(socket){		
 		var game = socket.game;
 		socket.on('updatePosition', function(data){			
-			game.setPlayerPosition(data);
+			if(!game.active) return;
 
-			game.host.emit('update', game.state(game.host));
-			game.client.emit('update', game.state(game.client));
+			game.setPlayerPosition(data);			
 
 			if(game.testPlayerCollision()){
-				game.send("Death wins!");
+				game.active = false;
+				game.host.emit('roundOver', {winner:'reaper', state:game.state(game.host)});
+				game.client.emit('roundOver', {winner:'reaper', state:game.state(game.client)});
+				game.prepareNextRound();				
+			} else if(game.testDoorCollision()){
+				game.active = false
+				game.host.emit('roundOver', {winner:'wizard', state:game.state(game.host)});
+				game.client.emit('roundOver', {winner:'wizard', state:game.state(game.client)});
+				game.prepareNextRound();
+			}
+			else{			
+				game.host.emit('update', game.state(game.host));
+				game.client.emit('update', game.state(game.client));
 			}
 		})
 	}

@@ -1,10 +1,88 @@
 html{
 	background-color: #000;
+	font-family: 'Luckiest Guy', cursive;
+}
+#banner{
+	text-align: center;;
+	color: white;
+	width: 100%;
+	margin-top: 20px;
 }
 
-#demoCanvas{
-	position: absolute;	
-	width: 640;
-	height: 640;
+#flashbanner{
+	position: absolute;
+	color:white;
+	width: 100%;
+	top:50%;	
+	margin-top: -80px;
+	margin-left: 90px;
+	text-align: center;	
+}
+
+#flashbanner h1{
+	height: 30px;
+	font-size: 4em;	
+}
+
+.container{
+	position: absolute;
+   top: 50%;
+   margin-top: -302px;/* half of #content height*/
+   left: 0;
+   width: 100%;
+}
+
+#game{
+	position: relative;;
+	
+	width: 1024px;	
+	height: 604px;
+	margin: auto auto;		
+}
+
+#hud{
+	background-color: #EFEFEF;
+	width:180px;
+	height: 564px;
+	float:left;
+	position: relative;
+	padding: 20px;
+	text-align: center;
+}
+#hud h2{
+	margin: 0px;
+}
+#hud div{
+	margin: 0px 0px 40px 0px;
+}
+
+#score{
+	position: relative;
+}
+
+#score .scorecard{
+	width: 90px;
+	float: left;
+}
+
+#score .scorecard h2{
+	margin: 0px 0;
+	font-size: 3em;
+}
+
+#round{	
+	margin: 0 auto
+	float: left;
+}
+
+.giant{
+	font-size: 12em;	
+	margin: 0px 0;
+}
+
+#demoCanvas{	
+	float: left;
+	width: 800px;
+	height: 604px;
 	background-image:url('assets/background.png');
 }

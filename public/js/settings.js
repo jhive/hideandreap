@@ -3,8 +3,8 @@ function($){
 
 	var Settings = {
 		stage: {
-			width: $("#demoCanvas").width(),
-			height: $("#demoCanvas").height()
+			width: 800,
+			height: 604
 		},
 
 		wizardSpeed: 10,

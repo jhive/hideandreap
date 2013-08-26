@@ -28,13 +28,13 @@ function(Ash, EaselJS, LightingNode, Display, Settings)
 		},	
 
 		addToMask: function(node){
-			//this.mask.addChild(node.light.graphic);
+			
 		},
 		
 		update: function(time){
 			this.mask.graphics.clear();
 			this.mask.graphics.beginFill("rgba(0,0,0, 1)");
-			this.mask.graphics.rect(0, 0, Settings.stage.width, Settings.stage.height); 			
+			this.mask.graphics.rect(0, 0, Settings.stage.width, Settings.stage.height + 5); 			
 			this.mask.cache(0, 0, Settings.stage.width, Settings.stage.height);
 
 			for( var node = this.nodes.head; node; node = node.next ){												
@@ -60,7 +60,7 @@ function(Ash, EaselJS, LightingNode, Display, Settings)
 		},
 
 		removeFromMask: function(node){
-			//this.mask.removeChild(node.light.graphic);
+			
 		},
 
 		removeFromEngine: function(engine)

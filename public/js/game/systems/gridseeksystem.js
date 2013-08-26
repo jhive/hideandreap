@@ -17,8 +17,8 @@ function(Ash, GridSeekNode, Point){
 			for( var node = this.nodes.head; node; node = node.next ){				
 				var targetposition = new Point(16 + node.gridposition.position.x * 32, 16 + node.gridposition.position.y * 32);
 					
-				node.motion.velocityX = (targetposition.x - node.position.position.x) * 10;					
-				node.motion.velocityY = (targetposition.y - node.position.position.y) * 10;
+				node.motion.velocityX = (targetposition.x - node.position.position.x) * node.gridposition.speed;					
+				node.motion.velocityY = (targetposition.y - node.position.position.y) * node.gridposition.speed;
 							
 
 				if(Math.abs(targetposition.x - node.position.position.x) < 4){

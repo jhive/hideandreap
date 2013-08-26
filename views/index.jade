@@ -1,8 +1,29 @@
 extends layout
 
 block content
-	div#info
-	canvas#demoCanvas(width="800" height="608") alternate content
+	div#banner
+		p 
+	div.container
+		div#game
+			div#hud
+				div#info
+					h2 You are the reaper!
+					p Find the wizard before he escapes.
+				div#score
+					h2 SCORE				
+					div#me.scorecard
+						p ME
+						h2 0
+					div#enemy.scorecard
+						p OTHER GUY
+						h2 0
+				div#round
+					h2 Round
+					p.giant 1
+			canvas#demoCanvas(width="800" height="608") alternate content
+		
+		div#flashbanner
+				h1 
 		
 	script(src="/socket.io/socket.io.js")	
 	script(src="js/keyboard.js")

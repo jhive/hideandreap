@@ -18,9 +18,7 @@ function(Ash, EaselJS, RenderNode)
 			for(var i = 0; i < this.layers.length; i++){
 				this.stage.addChild(this.layers[i]);			
 			}
-			
-			
-
+					
 			return this;
 		},
 

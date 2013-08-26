@@ -116,9 +116,7 @@ function
 			this.engine.addSystem( new MovementSystem(), 2);			
 			this.engine.addSystem( new SpriteAnimationSystem(this.creator), 3 );						
 			this.engine.addSystem( new RenderSystem(this.stage), 3 );
-			//this.engine.addSystem( new LightingSystem(this.creator, this.stage), 3);
-
-			
+			this.engine.addSystem( new LightingSystem(this.creator, this.stage), 3);			
 		},
 
 		reset:function(){

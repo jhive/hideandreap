@@ -33,38 +33,33 @@ define(['ash', 'jquery'], function(Ash,  $){
 			});
 
 			this.socket.on('update', function(state){		
-				console.log(state.players.me.position.x, state.players.me.position.y);						
+				//console.log(state.players.me.position.x, state.players.me.position.y);						
 				self.state.players.me.position.x = state.players.me.position.x;
 				self.state.players.me.position.y = state.players.me.position.y;
 				self.state.players.me.position.rotation = state.players.me.position.rotation;				
 
 				self.state.players.enemy.position.x = state.players.enemy.position.x;
 				self.state.players.enemy.position.y = state.players.enemy.position.y;
-				self.state.players.enemy.position.rotation = state.players.enemy.position.rotation;														
+				self.state.players.enemy.position.rotation = state.players.enemy.position.rotation;																		
 			});
+
+			this.socket.on('updateLanterns', function (data){				
+				self.state.lanterns = data.state.lanterns;
+			})
 
 			this.socket.on('roundOver', function(data){
 				self.updateHUD(data);
-				/*
-				if(data.winner == 'reaper'){
-					$('#flashbanner>h1').text("The Reaper wins!");				
-				}
-				else{
-					$('#flashbanner>h1').text("The Wizard wins!");					
-				}
-				$('#flashbanner').fadeIn();
-				$('#flashbanner').fadeOut();
-				*/
+				self.game.endRound(data);
 			})	
 
-			this.socket.on('nextRound', function(data){				
-				console.log(data);
+			this.socket.on('nextRound', function(data){								
+				self.state = data.state;
 				self.updateHUD(data);
 				self.game.setupNewRound(data.state);
 			})	
 		},
 		updateHUD: function(data){
-			console.log(data);
+			
 			if(data.state.players.me.role == 'reaper'){
 				$('#info>h2').text("You are the Reaper")
 				$('#info>p').text("Find the Wizard before he escapes!")

@@ -14,7 +14,14 @@ define(['ash', 'nodes/motioncontrolnode','brejep/point'], function(Ash, MotionCo
 		},
 
 		addToEngine: function(engine){			
-			this.nodes = engine.getNodeList(MotionControlNode);			
+			this.nodes = engine.getNodeList(MotionControlNode);	
+			console.log(this.nodes);
+			this.nodes.nodeAdded.add(function(){
+				console.log("MotionNode added");
+			})
+			this.nodes.nodeRemoved.add(function(){
+				console.log("MotionNode removed");
+			})		
 		},
 
 		update: function(time)
@@ -55,10 +62,9 @@ define(['ash', 'nodes/motioncontrolnode','brejep/point'], function(Ash, MotionCo
 					}
 
 					gridposition.position.x = targetposition.x;
-					gridposition.position.y = targetposition.y;				
+					gridposition.position.y = targetposition.y;			
+
 				}
-
-
 			}
 		},
 

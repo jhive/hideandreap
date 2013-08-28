@@ -95,7 +95,7 @@ var Server = function(){
 				game.active = false;
 				game.host.emit('roundOver', {winner:'reaper', state:game.state(game.host)});
 				game.client.emit('roundOver', {winner:'reaper', state:game.state(game.client)});
-				game.prepareNextRound();				
+				game.prepareNextRound();
 			} else if(game.testDoorCollision()){
 				game.active = false
 				game.host.emit('roundOver', {winner:'wizard', state:game.state(game.host)});

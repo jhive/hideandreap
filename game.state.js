@@ -16,9 +16,11 @@ var PlayerState = function(id, x, y, rotation){
 var GameState = function(id){	
 	this.id = id;
 	this.players = {};	
+	
 }
 
 var Game = function(host){
+	this.lantern
 	this.active = true;
 	this.id = UUID();
 	this.host = host;
@@ -29,6 +31,19 @@ var Game = function(host){
 	this.reaperSpeed = 10;
 
 	this.door = {x:6, y:5};
+	this.lanterns = [
+		{x:19, y:4,  radius: 0},
+		{x:18, y:9, radius: 0},
+		{x:18, y:14, radius: 0},
+		{x:14, y:13, radius: 0},
+		{x:10, y:16, radius: 0},
+		{x:7, y:14, radius: 0},
+		{x:6, y:8, radius: 0},
+		{x:7, y:4, radius: 0},
+		{x:10, y:3, radius: 0},
+		{x:2, y:11, radius: 0},
+		{x:12, y:6, radius: 0},
+		];
 	
 	
 	this.player_roles = ['wizard', 'reaper'];
@@ -59,10 +74,44 @@ var Game = function(host){
 		this.setPlayerRole(this.client.uuid, (randomRole + 1) % 2 )
 
 		this.randomizeDoor();
+		this.startLanterns();
 
 		this.host.emit('startGame', { state: this.state(this.host)} );
 		this.client.emit('startGame', { state: this.state(this.client)} );
 	}
+
+
+	this.shutAllLanterns = function(){
+
+		for(var i = 0; i < this.lanterns.length; i++){
+			this.lanterns[i].radius = 0;	
+		}
+	}
+	var lanternInterval = null;
+	this.startLanterns = function(){
+		var self = this;
+		lanternInterval = setInterval(function(){			
+			self.randomizeLanterns();						
+		}, 2000)
+	}
+
+	this.stopLanterns = function(){
+		//this.shutAllLanterns();
+		clearInterval(lanternInterval);
+	}
+
+	this.randomizeLanterns = function(){				
+		this.shutAllLanterns();
+
+		for(var i = 0; i < 2; i++){
+			var lanternIndex = Math.floor(Math.random() * this.lanterns.length);			
+			this.lanterns[lanternIndex].radius = 80;			
+		}
+
+		this.host.emit('updateLanterns', { state: this.state(this.host)} );
+		this.client.emit('updateLanterns', { state: this.state(this.client)} );
+	}
+
 
 	this.setPlayerPosition = function(data){		
 		var player = _state.players[data.id];
@@ -83,13 +132,13 @@ var Game = function(host){
 	this.setPlayerRole = function(id, role){
 		var player = _state.players[id];
 		player.role = this.player_roles[role];		
-		if(player.role == 'wizard'){				
-			this.setPlayerPosition({id: id, x: 23, y: 17, rotation: 180});
+		if(player.role == 'wizard'){							
+			this.setPlayerPosition(this.getRandomWizardStartPosition(id));
 			this.setPlayerSpeed(id, this.wizardSpeed);
 		}
 		else
 		{
-			this.setPlayerPosition( {id: id, x: 1, y: 1, rotation: 0} );
+			this.setPlayerPosition( {id: id, x: 11, y: 9, rotation: 0} );
 			this.setPlayerSpeed(id, this.reaperSpeed);
 		}
 	}
@@ -130,11 +179,12 @@ var Game = function(host){
 		}
 		else{
 			return false;
-		}
+		}	
 
 	}
 
 	this.prepareNextRound = function(){
+		this.stopLanterns();
 		var timer = 3;
 		var self = this;
 		this.send("Next round in " + timer);
@@ -151,28 +201,44 @@ var Game = function(host){
 	}
 
 	this.nextRound = function(){		
+		
+
 		this.active = true;
 
 		this.swapPlayerRoles();
 		this.randomizeDoor();	
+		this.startLanterns();
 
 		this.host.emit('nextRound', { state: this.state(this.host)} );
-		this.client.emit('nextRound', { state: this.state(this.client)} );
+		this.client.emit('nextRound', { state: this.state(this.client)} );		
 	}
 
 	this.swapPlayerRoles = function(){
 		for(var id in _state.players){
 			_state.players[id].role = _state.players[id].role == 'wizard' ? 'reaper' : 'wizard';						
 			if(_state.players[id].role == 'wizard'){				
-				this.setPlayerPosition({id: id, x: 23, y: 17, rotation: 180});
+				this.setPlayerPosition(this.getRandomWizardStartPosition(id));
 				this.setPlayerSpeed(id, this.wizardSpeed);
 			}
 			else
 			{
-				this.setPlayerPosition( {id: id, x: 1, y: 1, rotation: 0} );
+				this.setPlayerPosition( {id: id, x: 11, y: 9, rotation: 0} );
 				this.setPlayerSpeed(id, this.reaperSpeed);
 			}
 		}
+	}
+
+	this.getRandomWizardStartPosition = function(id){
+
+		var positions = [
+			{id: id, x: 1, y: 1, rotation: 180},
+			{id: id, x: 1, y: 17, rotation: 0},
+			{id: id, x: 23, y: 1, rotation: 180},
+			{id: id, x: 23, y: 17, rotation: 0}
+		];
+
+		return positions[Math.floor(Math.random()*4)];
+
 	}
 
 	this.randomizeDoor = function(){
@@ -195,6 +261,7 @@ var Game = function(host){
 		socketstate.id = _state.id;
 		socketstate.players = {	};
 		socketstate.door = this.door;
+		socketstate.lanterns = this.lanterns;
 
 		for(var id in _state.players){
 			if(id == socket.uuid){
@@ -213,9 +280,9 @@ var Game = function(host){
 		this.client.emit(id, callback);
 	}
 
-	this.send = function(id, callback){
-		this.host.send(id, callback);
-		this.client.send(id, callback);
+	this.send = function(message){
+		this.host.send(message);
+		this.client.send(message);
 	}
 }
 

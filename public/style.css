@@ -1,6 +1,7 @@
 html{
 	background-color: #000;
 	font-family: 'Luckiest Guy', cursive;
+	overflow: hidden;
 }
 #banner{
 	text-align: center;;
@@ -10,18 +11,70 @@ html{
 }
 
 #flashbanner{
-	position: absolute;
+	display: none;
+	position: relative;
+	background-color: white;	
 	color:white;
-	width: 100%;
-	top:50%;	
-	margin-top: -80px;
-	margin-left: 90px;
+	width: 1023px;
+	height: 301px;
+	top: -350px;
+	margin: auto auto;
+	margin-top: -80px;	
+	
 	text-align: center;	
+	-webkit-box-shadow:  0px 5px 15px 3px rgba(0, 0, 0, 0.5);
+        
+    box-shadow:  0px 5px 15px 3px rgba(0, 0, 0, 0.5);
+    color: #111111;
+}
+
+#flashbanner .portrait{
+	background-size:  auto 400px;
+	background-repeat: no-repeat;
+	position: relative;
+	top: -50px;
+	left: 100px;
+	height: 400px;	
+}
+
+#hud .portrait{
+	background-size:  auto 300px;
+	background-repeat: no-repeat;
+	position: relative;
+	top: -30px;
+	left: 0px;
+	height: 400px;		
+	margin: none;
+	padding:none;
+}
+
+#flashbanner h2{
+	top: 60px;
+	position: relative;
+	display: block;
+	font-size: 2em;
+	position: relative;
+	padding-top:60px;
+
 }
 
 #flashbanner h1{
-	height: 30px;
-	font-size: 4em;	
+	display: block;
+	position: relative;
+	font-size: 6em;
+	
+}
+
+.portrait.wizard{
+	background: url('assets/wizard-portrait.png');		
+	font-family: 'Milonga', cursive;	
+}
+
+.portrait.reaper{
+
+	background: url('assets/reaper-portrait.png');			
+	background-position: -70px 0px;
+	font-family: 'Flavors', cursive;
 }
 
 .container{
@@ -42,7 +95,7 @@ html{
 
 #hud{
 	background-color: #EFEFEF;
-	width:180px;
+	width:184px;
 	height: 564px;
 	float:left;
 	position: relative;
@@ -58,6 +111,7 @@ html{
 
 #score{
 	position: relative;
+	top:-130px;
 }
 
 #score .scorecard{

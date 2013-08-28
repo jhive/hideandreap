@@ -994,7 +994,7 @@ define('ash-core/nodelist',[
             this.nodeAdded = new signals.Signal();
             this.nodeRemoved = new signals.Signal();
         },
-        
+
         add: function( node ) {
             if( !this.head ) {
                 this.head = this.tail = node;
@@ -1005,7 +1005,7 @@ define('ash-core/nodelist',[
             }
             this.nodeAdded.dispatch( node );
         },
-        
+
         remove: function( node ) {
             if( this.head == node ) {
                 this.head = this.head.next;
@@ -1021,7 +1021,7 @@ define('ash-core/nodelist',[
             }
             this.nodeRemoved.dispatch( node );
         },
-        
+
         removeAll: function() {
             while( this.head ) {
                 var node = this.head;
@@ -1032,11 +1032,11 @@ define('ash-core/nodelist',[
             }
             this.tail = null;
         },
-        
+
         empty: function() {
             return this.head === null;
         },
-        
+
         swap: function( node1, node2 ) {
             if( node1.previous == node2 ) {
                 node1.previous = node2.previous;
@@ -1079,7 +1079,7 @@ define('ash-core/nodelist',[
                 node2.next.previous = node2;
             }
         },
-        
+
         insertionSort: function( sortFunction ) {
             if( this.head == this.tail ) {
                 return;
@@ -1120,7 +1120,7 @@ define('ash-core/nodelist',[
                 }
             }
         },
-        
+
         mergeSort: function( sortFunction ) {
             if( this.head == this.tail ) {
                 return;
@@ -1146,7 +1146,7 @@ define('ash-core/nodelist',[
                 this.tail = this.tail.next;
             }
         },
-        
+
         merge: function( head1, head2, sortFunction ) {
             var node,
                 head;
@@ -1178,6 +1178,14 @@ define('ash-core/nodelist',[
                 head2.previous = node;
             }
             return head;
+        },
+
+        forEach: function( callback ) {
+            if (this.head) {
+                for ( var node = this.head, i = 0; node; node = node.next, i++ ) {
+                    callback.call( callback, node, i );
+                }
+            }
         }
     });
 
@@ -1248,13 +1256,16 @@ define('brejep/dictionary',[
         },
 
         has: function (testKey) {
+
             var i = 0,
                 len = this.keys.length,
                 key;
-            for(; i<len; ++i){
-                key = this.keys[i];
-                if(key == testKey) {
+            for(i; i<len; ++i){
+                key = this.keys[i];                
+                if(key == testKey) {                    
                     return true;
+                }
+                else{                    
                 }
             }
             return false;
@@ -1334,8 +1345,9 @@ define('ash-core/componentmatchingfamily',[
             this.addIfMatch(entity);
         },
 
-        componentRemovedFromEntity: function (entity, componentClass) {
-            if (this.components.has(componentClass)) {
+        componentRemovedFromEntity: function (entity, componentClass) {       
+            
+            if (this.components.has(componentClass)) {                
                 this.removeIfMatch(entity);
             }
         },
@@ -1559,10 +1571,10 @@ define('ash-core/engine',[
         updating: false,
         updateComplete: new signals.Signal(),
 
-        constructor: function () {    
+        constructor: function () {
             this.entityList = new EntityList(),
             this.systemList = new SystemList();
-            this.families = new Dictionary();                                   
+            this.families = new Dictionary();
 
             this.__defineGetter__('entities', function() {
                 var tmpEntities = [];
@@ -1585,7 +1597,7 @@ define('ash-core/engine',[
 
         addEntity: function (entity) {
             this.entityList.add( entity );
-            entity.componentAdded.add( this.componentAdded, this );
+            entity.componentAdded.add( this.componentAdded, this );            
             this.families.forEach( function( nodeObject, family ) {
                 family.newEntity( entity );
             });
@@ -1612,14 +1624,16 @@ define('ash-core/engine',[
         },
 
         getNodeList: function (nodeObject) {
-            if( this.families.has( nodeObject ) ) {
+            if( this.families.has( nodeObject ) ) {                
                 return this.families.retrieve( nodeObject ).nodes;
             }
-            var family = new this.familyClass( nodeObject, this );
+            var family = new this.familyClass( nodeObject, this );            
             this.families.add( nodeObject, family );
             for( var entity = this.entityList.head; entity; entity = entity.next ) {
                 family.newEntity( entity );
             }
+
+            
             return family.nodes;
         },
 
@@ -1630,7 +1644,7 @@ define('ash-core/engine',[
             this.families.remove( nodeObject );
         },
 
-        addSystem : function( system, priority ) {            
+        addSystem : function( system, priority ) {
             system.priority = priority;
             system.addToEngine( this );
             this.systemList.add( system );
@@ -1652,7 +1666,7 @@ define('ash-core/engine',[
         },
 
         update : function( time ) {
-            this.updating = true;                    
+            this.updating = true;
             for( var system = this.systemList.head; system; system = system.next ) {
                 system.update( time );
             }
@@ -1698,12 +1712,12 @@ define('ash-core/entity',[
             return this;
         },
         
-        remove: function (componentObject) {
+        remove: function (componentObject) {            
             componentObject = componentObject.prototype;
             var component = this.components.retrieve( componentObject );
             if ( component ) {
-                this.components.remove( componentObject );
-                this.componentRemoved.dispatch( this, componentObject );
+                this.componentRemoved.dispatch( this, component.constructor );
+                this.components.remove( componentObject );                
                 return component;
             }
             return null;
@@ -1759,9 +1773,51 @@ define('ash-core/node',[
         entity: null,
         previous: null,
         next: null,
-        
+
         constructor: function () { }
     });
+
+    /**
+    * A simpler way to create a node.
+    *
+    * Example: creating a node for component classes Point &amp; energy:
+    *
+    * var PlayerNode = Ash.Node.create({
+    *   point: Point,
+    *   energy: Energy
+    * });
+    *
+    * This is the simpler version from:
+    *
+    * var PlayerNode = Ash.Node.extend({
+    *   point: null,
+    *   energy: null,
+    *
+    *   types: {
+    *     point: Point,
+    *     energy: Energy
+    *   }
+    * });
+    */
+    Node.create = function (schema) {
+        var processedSchema = {
+            types: {},
+            constructor: function () { }
+        };
+
+        // process schema
+        for (var propertyName in schema) {
+            if (schema.hasOwnProperty(propertyName)) {
+                var propertyType = schema[propertyName];
+                if (propertyType) {
+                    processedSchema.types[propertyName] = propertyType;
+                }
+                processedSchema[propertyName] = null;
+            }
+        }
+
+        return Node.extend(processedSchema);
+    };
 
     return Node;
 });
@@ -1808,7 +1864,7 @@ define('ash-core/system',[
  */
 define('ash/ash-framework',['require','ash-core/engine','ash-core/componentmatchingfamily','ash-core/entity','ash-core/entitylist','ash-core/family','ash-core/node','ash-core/nodelist','ash-core/nodepool','ash-core/system','ash-core/systemlist','brejep/class','signals'],function (require) {
     var core = {
-        VERSION: '0.1.0'
+        VERSION: '0.2.1'
     };
 
     core.Engine = require('ash-core/engine');

@@ -45,7 +45,8 @@ function(Ash, EaselJS, LightingNode, Display, Settings)
 				var destX = Math.floor(position.x - radius);
 				var destY = Math.floor(position.y - radius);
 				
-				var lightImageData = node.light.imageData;											
+				var lightImageData = node.light.imageData;		
+				if(!lightImageData) continue;									
 				var source = lightImageData.getContext("2d").getImageData(0, 0, diameter, diameter).data;				
 				var destinationImageData = this.mask.cacheCanvas.getContext("2d").getImageData(destX, destY, diameter, diameter);
 				var destination = destinationImageData.data;

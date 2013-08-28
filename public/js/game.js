@@ -13,8 +13,15 @@ define([
 	'systems/servercontrolsystem',
 	'systems/gridseeksystem',	
 	'systems/lightingsystem',
+	'systems/lanternsystem',
+
 	'components/position',
-	'brejep/keypoll'
+	'components/motioncontrol',
+	'components/servercontrol',
+
+
+	'brejep/keypoll',
+	'brejep/tickprovider'
 	], 
 function
 (
@@ -32,14 +39,20 @@ function
 	ServerControlSystem,
 	GridSeekSystem,	
 	LightingSystem,
+	LanternSystem,
+
 	Position,
-	KeyPoll
+	MotionControl,
+	ServerControl,
+
+	KeyPoll,
+	TickProvider
 ){	
 	
-	var Game = Ash.Class.extend({
-		
+	var Game = Ash.Class.extend({		
 		stage:null,		
 		engine:null,
+		tickProvider:null,
 		creator:null,		
 		socket:null,
 		keyPoll:null,
@@ -63,6 +76,8 @@ function
 
 			this.keyPoll = new KeyPoll();		
 			this.mapParser = new MapParser(this.creator, mapData);
+
+			this.tickProvider = new TickProvider();
 				
 		},
 
@@ -73,11 +88,17 @@ function
 			/** Setup your game here **/
 			this.reset();
 			this.initEngines();
-			this.setupNewRound(state);			
+			this.setupNewRound(state);							
 			
+			console.log(state);
+			for(var i = 0; i < state.lanterns.length; i++){
+				var lantern = state.lanterns[i];
+				this.creator.createLantern(i, lantern.x, lantern.y)
+			}
+
 			/** End game setup       **/			
-            createjs.Ticker.addEventListener("tick", this.handleTick.bind(this));
-			createjs.Ticker.setFPS(60);	
+            this.tickProvider.add(this.engine.update, this.engine);
+            this.tickProvider.start();
 		},
 
 		pause: function(){
@@ -89,6 +110,7 @@ function
 		},	
 
 		setupNewRound: function(state){
+			$('#flashbanner').css({display:'none'});
 			if(this.player || this.enemy){
 				this.creator.killEntity(this.player);
 				this.creator.killEntity(this.enemy);			
@@ -103,7 +125,61 @@ function
 			}
 
 			this.player = this.creator.createPlayer( state.players.me );
-			this.enemy = this.creator.createPlayer( state.players.enemy, this.socket);						
+			this.enemy = this.creator.createPlayer( state.players.enemy, this.socket);										
+
+			if(state.players.me.role == 'wizard'){				
+				$("#hud>.portrait").removeClass('wizard repear').addClass('wizard');
+				$('#flashbanner').css({display:'block'});
+				$("#flashbanner>.portrait").removeClass('wizard reaper').addClass('wizard');
+				$("#flashbanner>.portrait>h2").text("You are the wizard");				
+				$("#flashbanner>.portrait>h1").text("Escape!")				
+			}
+			else{				
+				$("#hud>.portrait").removeClass('wizard repear').addClass('reaper');
+				$('#flashbanner').css({display:'block'});				
+				$("#flashbanner>.portrait").removeClass('wizard reaper').addClass('reaper');
+				$("#flashbanner>.portrait>h2").text("You are the reaper");
+				$("#flashbanner>.portrait>h1").text("Find the Wizard!")	
+			}
+
+			$('#flashbanner').delay(1500).fadeOut(400);
+		},
+
+		endRound: function(data){			
+			this.player.remove(MotionControl);			
+			this.enemy.remove(ServerControl);		
+			console.log(data);	
+
+			if(this.player || this.enemy){
+				this.creator.killEntity(this.player);
+				this.creator.killEntity(this.enemy);			
+
+				this.player = null;
+				this.enemy = null;
+			}
+			
+			if(data.winner == 'wizard'){
+				if(this.door) this.creator.killEntity(this.door);				
+				$('#flashbanner').css({display:'block'});
+				$("#flashbanner>.portrait").removeClass('wizard reaper').addClass('wizard');
+				$("#flashbanner>.portrait>h2").text("The Wizard Escaped!");				
+			}
+			else{
+				if(this.door) this.creator.killEntity(this.door);				
+				$('#flashbanner').css({display:'block'});
+				$("#flashbanner>.portrait").removeClass('wizard reaper').addClass('reaper');
+				$("#flashbanner>.portrait>h2").text("Soul Reaped!");
+				
+			}
+
+			if(data.state.players.me.role == data.winner){
+				$('#flashbanner>.portrait>h1').text("You win!");
+			}
+			else{
+				$('#flashbanner>.portrait>h1').text("You lose...");
+			}
+
+			$('#flashbanner').delay(2000).fadeOut(400);
 		},
 
 		initEngines: function(){
@@ -112,6 +188,7 @@ function
 			
 			this.engine.addSystem( new MotionControlSystem( this.keyPoll, tiles, this.socket ), 0);
 			this.engine.addSystem( new ServerControlSystem(), 0);
+			this.engine.addSystem( new LanternSystem(this.socket), 0);
 			this.engine.addSystem( new GridSeekSystem(), 1);
 			this.engine.addSystem( new MovementSystem(), 2);			
 			this.engine.addSystem( new SpriteAnimationSystem(this.creator), 3 );						
@@ -122,11 +199,6 @@ function
 		reset:function(){
 			this.engine.removeAllEntities();
 			this.engine.removeAllSystems();
-		},
-
-		handleTick: function(event)
-		{						
-			this.engine.update(event.delta / 1000);			
 		}
 	});	
 	return Game;

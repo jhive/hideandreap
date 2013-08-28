@@ -9,6 +9,8 @@ block content
 				div#info
 					h2 You are the reaper!
 					p Find the wizard before he escapes.
+				div.portrait					
+
 				div#score
 					h2 SCORE				
 					div#me.scorecard
@@ -17,14 +19,14 @@ block content
 					div#enemy.scorecard
 						p OTHER GUY
 						h2 0
-				div#round
-					h2 Round
-					p.giant 1
+				
 			canvas#demoCanvas(width="800" height="608") alternate content
 		
 		div#flashbanner
-				h1 
+			div.portrait.reaper
+				h2 Soul Reaped!
+				h1 You win!
+			div#message
 		
-	script(src="/socket.io/socket.io.js")	
-	script(src="js/keyboard.js")
+	script(src="/socket.io/socket.io.js")		
 	script(data-main="js/config.js" src="js/require.js") 

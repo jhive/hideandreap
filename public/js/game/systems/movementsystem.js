@@ -14,10 +14,11 @@ function(Ash, MovementNode){
 		},		
 
 		update: function(time){			
-			for( var node = this.nodes.head; node; node = node.next ){
+			for( var node = this.nodes.head; node; node = node.next ){				
 				node.position.position.x += node.motion.velocityX * time;
 				node.position.position.y += node.motion.velocityY * time;
-				node.position.rotation += node.motion.angularVelocity * time;				
+				node.position.rotation += node.motion.angularVelocity * time;	
+				
 			}			
 		},
 

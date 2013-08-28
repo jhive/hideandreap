@@ -128,14 +128,14 @@ function
 			this.enemy = this.creator.createPlayer( state.players.enemy, this.socket);										
 
 			if(state.players.me.role == 'wizard'){				
-				$("#hud>.portrait").removeClass('wizard repear').addClass('wizard');
+				$("#hud>.portrait").removeClass('wizard reaper').addClass('wizard');
 				$('#flashbanner').css({display:'block'});
 				$("#flashbanner>.portrait").removeClass('wizard reaper').addClass('wizard');
 				$("#flashbanner>.portrait>h2").text("You are the wizard");				
 				$("#flashbanner>.portrait>h1").text("Escape!")				
 			}
 			else{				
-				$("#hud>.portrait").removeClass('wizard repear').addClass('reaper');
+				$("#hud>.portrait").removeClass('wizard reaper').addClass('reaper');
 				$('#flashbanner').css({display:'block'});				
 				$("#flashbanner>.portrait").removeClass('wizard reaper').addClass('reaper');
 				$("#flashbanner>.portrait>h2").text("You are the reaper");

@@ -1,0 +1,12 @@
+Hide and Reap
+=================
+
+About the project
+------------------
+This was an entry for the Windsor Hackforge Summer Games. I had two weeks to complete a game prototype during my free time, this game was the result. This code is in progress and is just a rapid prototype to satisfy the competition deadline. It currently contains about 30 hours of work.
+
+How to play
+------------
+The game is played by two players over a network connection. It's developed in javascript using EaselJS to simplify rendering to the canvas. I use Node and Socket.io to facilitate the network play.
+
+Check out the demo at: rocky-ocean-4629.herokuapp.com. You're going to need a friend to play. Or, alternatively, you can see the game running by refreshing your browser after you create a room (you'll see server status messages near the top of the browser).

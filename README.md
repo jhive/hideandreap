@@ -3,7 +3,7 @@ Hide and Reap
 
 About the project
 ------------------
-This was an entry for the  [Windsor Hackforge Summer Games](http://hackf.org/2013-hackforge-summer-games-rules-and-entry-form/).. I had two weeks to complete a game prototype during my free time, this game was the result. This code is in progress and is just a rapid prototype to satisfy the competition deadline. It currently contains about 30 hours of work. You can read a bit into my process on a blog I wrote during the duration: [Push Pixels blog](http://jhive.wordpress.com/).
+This was an entry for the  [Windsor Hackforge Summer Games](http://hackf.org/2013-hackforge-summer-games-rules-and-entry-form/).. I had two weeks to complete a game prototype during my free time, this game was the result. This code is in progress and is just a rapid prototype to satisfy the competition deadline. It currently contains about 30 hours of work. You can read a bit into my process on a blog I wrote during the duration: [Pushing Pixels Blog](http://jhive.wordpress.com/).
 
 How to play
 ------------
